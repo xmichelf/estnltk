@@ -5,7 +5,7 @@ Note! The interface described here should be considered deprecated. See the code
 Estnltk Elastic wrapper
 =======================
 
-Estnlt has :py:class:`~estnltk.database.database.Database` class that represents a single index of Elastic.
+Estnltk has :py:class:`~estnltk.database.database.Database` class that represents a single index of Elastic.
 The most important thing to know is the constructor signature::
 
     def __init__(self, index, doc_type='document', **kwargs):

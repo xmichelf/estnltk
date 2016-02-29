@@ -1159,6 +1159,7 @@ class Text(dict):
         self[name] = [{START: mo.start(), END: mo.end()} for mo in pattern.finditer(self[TEXT])]
         return self
 
+        
     # ///////////////////////////////////////////////////////////////////
     # SPLITTING
     # ///////////////////////////////////////////////////////////////////
