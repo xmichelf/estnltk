@@ -1,29 +1,25 @@
+'''
+Module which uploads all synsets and respective literals(lemmas) to 'all_synsets.db' database.
 
 '''
-Module which uploads all synsets to 'all_synsets.db' database.
-
-'''
-
 from estnltk.wordnet import wn
 import sqlite3
 
-synset_database_db = 'estnltk/wordnet/data/all_synsets_new.db'
 pos = [wn.ADJ, wn.ADV, wn.VERB, wn.NOUN]
-synsetList =[]
+synsetList=[]
 for i in pos:
     tmp = wn.all_synsets(i)
     for j in tmp:
-        synsetList.append(j)
+        synsetList.append(j)     
 
-print(len(synsetList))
-
+synset_database_db = 'wordnet/data/all_synsets.db'
 
 synsetPos   = []
 synsetName  = []
 synsetSense =[]
 
 ssetStr = []
-
+'''
 for i in synsetList:
     ssetStr.append(str(i))
 
@@ -31,6 +27,7 @@ for i in range(len(ssetStr)):
     synsetName.append(ssetStr[i][9:-8])
     synsetSense.append(ssetStr[i][-5:-3])
     synsetPos.append(ssetStr[i][-7:-6])
+'''
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -42,7 +39,7 @@ def create_connection(db_file):
         conn = sqlite3.connect(db_file)
         return conn
     except sqlite3.Error as e:
-        print("Connection error: [%s]" % e)
+        print("\n\tConnection error: [%s]" % e)
 
     return None
 
@@ -56,23 +53,23 @@ def create_table(conn, create_table_sql ):
         c = conn.cursor()
         c.execute(create_table_sql)
     except sqlite3.Error as e:
-        print("Connection error while creating table: [%s]" % e)
+        print("\n\tConnection error while creating table: [%s]" % e)
 
 def sqlTables(databaseLoc):
 
     sql_create_synset_table = ''' CREATE TABLE IF NOT EXISTS synset_table(
 
-                                        synset_id INT NOT NULL,
-                                        synset_word TEXT NOT NULL,
-                                        literal     TEXT NOT NULL
-                                        POS         CHAR NOT NULL,
-                                        sense       INT NOT NULL
+                                        synset_id   integer NOT NULL,
+                                        synset_word text,
+                                        POS         text NOT NULL,
+                                        sense       integer NOT NULL,
+                                        literal     text
                                                     ); '''
     conn = create_connection(databaseLoc)
     if conn is not None:
         create_table(conn,sql_create_synset_table)
     else:
-        print("Error! cannot create db conn.")
+        print("\n\tError! cannot create db conn.")
 
 def database_create(synset_database_db):
     sqlTables(synset_database_db)
@@ -83,25 +80,23 @@ def database_create(synset_database_db):
         literals = []
         for sset in synsetList:
             rsset = sset._raw_synset
-            for relation_candidate in rsset.internalLinks:
+            for name in rsset.variants:
 
-                sset_literal    =relation_candidate.target_concept.variants[0].literal
-                sset_sense      =relation_candidate.target_concept.variants[0].sense
-                sset_pos        =rsset.pos
-                #[nimi.literal for nimi in rsset.variants ]
-                for name in rsset.variants:
-                    if len(name.literal) == 1:
-                        literal = None
-                    elif name == rsset.variants[0]:
-                        literal = None
-                    else: sset_literal = name
-                    print("lit. > 1 !")
-                    
-                    cursor.execute("INSERT INTO synset_table(synset_id, synset_word, literal, POS, sense) VALUES(?,?,?,?)",(i, sset_word, literal,pos, sense) ) 
-                    conn.commit()
+                #TODO: get word from low level.
+                sset_word = sset.name[:-5]
+                sset_sense = rsset.variants[0].sense
+                sset_pos   = rsset.pos
+                sset_literal = None
+                if name.literal == sset_word:
+                    continue
+                else: sset_literal = name.literal
+
+
+                cursor.execute("INSERT INTO synset_table(synset_id, synset_word, POS, sense,literal) VALUES(?,?,?,?,?)"\
+                                                         ,(i, sset_word,sset_pos, sset_sense, sset_literal) ) 
+                conn.commit()
             i+=1
     
     conn.close()
-
+    
 database_create(synset_database_db)
-
