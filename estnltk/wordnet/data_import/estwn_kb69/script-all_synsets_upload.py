@@ -13,12 +13,6 @@ for i in pos:
         synsetList.append(j)     
 
 synset_database_db = 'wordnet/data/all_synsets.db'
-
-synsetPos   = []
-synsetName  = []
-synsetSense =[]
-
-ssetStr = []
 '''
 for i in synsetList:
     ssetStr.append(str(i))
@@ -80,12 +74,10 @@ def database_create(synset_database_db):
         literals = []
         for sset in synsetList:
             rsset = sset._raw_synset
+            sset_word = rsset.variants[0].literal
+            sset_sense = rsset.variants[0].sense
+            sset_pos   = rsset.pos
             for name in rsset.variants:
-
-                #TODO: get word from low level.
-                sset_word = sset.name[:-5]
-                sset_sense = rsset.variants[0].sense
-                sset_pos   = rsset.pos
                 sset_literal = None
                 if name.literal == sset_word:
                     continue
