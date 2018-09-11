@@ -73,19 +73,21 @@ def database_create(synset_database_db):
     with conn:
         literals = []
         for sset in synsetList:
-            rsset = sset._raw_synset
+            rsset = sset._raw_synset    
             sset_word = rsset.variants[0].literal
             sset_sense = rsset.variants[0].sense
             sset_pos   = rsset.pos
             for name in rsset.variants:
-                sset_literal = None
+                sset_literal = []
                 if name.literal == sset_word:
-                    continue
+                    if len(rsset.variants) == 1:
+                        sset_literal = None
+                    else:
+                        continue
                 else: sset_literal = name.literal
 
-
                 cursor.execute("INSERT INTO synset_table(synset_id, synset_word, POS, sense,literal) VALUES(?,?,?,?,?)"\
-                                                         ,(i, sset_word,sset_pos, sset_sense, sset_literal) ) 
+                                                            ,(i, sset_word,sset_pos, sset_sense, sset_literal) ) 
                 conn.commit()
             i+=1
     
