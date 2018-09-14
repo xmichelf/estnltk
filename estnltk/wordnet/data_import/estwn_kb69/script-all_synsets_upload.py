@@ -5,6 +5,7 @@ Module which uploads all synsets and respective literals(lemmas) to 'all_synsets
 from estnltk.wordnet import wn
 import sqlite3
 
+lastId = 39579 # last id in synset database for uploading data from this point.
 pos = [wn.ADJ, wn.ADV, wn.VERB, wn.NOUN]
 synsetList=[]
 for i in pos:
@@ -65,14 +66,15 @@ def sqlTables(databaseLoc):
     else:
         print("\n\tError! cannot create db conn.")
 
-def database_create(synset_database_db):
-    sqlTables(synset_database_db)
+def database_create(synset_database_db, lastId):
+    #sqlTables(synset_database_db)
     conn = create_connection(synset_database_db)
     cursor=conn.cursor()
-    i=j=0
+    j=0
+    k=lastId
     with conn:
         literals = []
-        for sset in synsetList:
+        for sset in synsetList[lastId:]:
             rsset = sset._raw_synset    
             sset_word = rsset.variants[0].literal
             sset_sense = rsset.variants[0].sense
@@ -87,10 +89,10 @@ def database_create(synset_database_db):
                 else: sset_literal = name.literal
 
                 cursor.execute("INSERT INTO synset_table(synset_id, synset_word, POS, sense,literal) VALUES(?,?,?,?,?)"\
-                                                            ,(i, sset_word,sset_pos, sset_sense, sset_literal) ) 
+                                                            ,(k, sset_word,sset_pos, sset_sense, sset_literal) ) 
                 conn.commit()
-            i+=1
+            k+=1
     
     conn.close()
     
-database_create(synset_database_db)
+database_create(synset_database_db,lastId)
