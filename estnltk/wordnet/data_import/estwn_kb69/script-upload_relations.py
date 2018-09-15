@@ -16,7 +16,7 @@ synsetList=[]
 
 
 # save all synsets from wn to synsetList
-#TODO: when all synsets are in database, then fetch from db. Then fetch_relations function has to be reworked.
+#TODO: when all synsets are in database, then fetch from db. Fetch_relations function has to be reworked in this case.
 for i in pos:
     tmp = wn.all_synsets(i)
     for j in tmp:
