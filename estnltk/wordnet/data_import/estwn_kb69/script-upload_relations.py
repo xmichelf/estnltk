@@ -130,6 +130,7 @@ def fetch_relations(db_file):
                         for word in rel_word:
                             start_sset.append(word)
                             end_sset.append(sset_word)
+                            rel_type.append(relation_str[i])
                             #print(word)
                             start = (fetch_id(word,cursor))
                             if start is not None:
@@ -140,6 +141,7 @@ def fetch_relations(db_file):
                         end_sset.append(sset_word)
                         start_sset.append(rel_word)
                         start = fetch_id(rel_word[0],cursor)
+                        rel_type.append(relation_str[i])
                         #print(start)
                         if start is not None:
                             start_vrtx.append(start[0])
