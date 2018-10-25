@@ -145,14 +145,8 @@ sset_word = []
 get_ssets(sset_db)
 
 
-# In[35]:
 
-
-start_vrtx[:10]
-
-
-# In[66]:
-
+#start_vrtx[15:30]
 
 g = ig.Graph()
 g.vs["synset"]=[]
