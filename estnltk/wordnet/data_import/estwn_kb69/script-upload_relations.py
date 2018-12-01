@@ -105,8 +105,12 @@ def fetch_synsets(synset_db):
         cursor.execute("SELECT DISTINCT synset_word FROM synset_table")
         for row in cursor.fetchall():
             synsetList.append(row[0])
-    
-
+#TODO: upload whole synset string to sset_start and sset_end columns (name.n.0x) 
+def synset_name(raw_synset):
+    pos = raw_synset.pos
+    literal = raw_synset.variants[0].literal
+    sense = "%02d"%raw_synset.variants[0].sense
+    return '.'.join([literal,pos,sense])
 
 def fetch_relations(db_file):
     

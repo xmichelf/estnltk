@@ -5,15 +5,15 @@ Module which uploads all synsets and respective literals(lemmas) to 'all_synsets
 from estnltk.wordnet import wn
 import sqlite3
 
-lastId = 0 # last id in synset database for uploading data from this point.
+synset_database_db = 'wordnet/data/all_synsets.db'
+lastId = 0
+
 pos = [wn.ADJ, wn.ADV, wn.VERB, wn.NOUN]
 synsetList=[]
 for i in pos:
     tmp = wn.all_synsets(i)
     for j in tmp:
-        synsetList.append(j)     
-
-synset_database_db = 'wordnet/data/all_synsets.db'
+        synsetList.append(j)
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -58,13 +58,13 @@ def sqlTables(databaseLoc):
         print("\n\tError! cannot create db conn.")
 
 def database_create(synset_database_db, lastId):
-    print("uploading to db.")
     sqlTables(synset_database_db)
     conn = create_connection(synset_database_db)
     cursor=conn.cursor()
     j=0
     k=lastId
     with conn:
+        print("uploading to db.")
         literals = []
         for sset in synsetList[lastId:]:
             rsset = sset._raw_synset    
@@ -86,5 +86,5 @@ def database_create(synset_database_db, lastId):
             k+=1
     
     conn.close()
-    
-database_create(synset_database_db,lastId)
+
+database_create(synset_database_db,lastId)   
