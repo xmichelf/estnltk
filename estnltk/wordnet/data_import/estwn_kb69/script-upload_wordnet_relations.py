@@ -102,10 +102,20 @@ def synset_name(raw_synset):
     sense = "%02d"%raw_synset.variants[0].sense
     return '.'.join([literal,pos,sense])
 
+def synset_str(synset_word, cursor):
+    cursor.execute('SELECT pos, sense FROM wordnet_entries WHERE synset_word = ?',(synset_word,))
+    data = cursor.fetchone()
+    if data is not None:
+        var = "." + data[0] + "." + str(data[1])
+        synset_word += var
+    else: return None
+    
+    return synset_word
+
 def fetch_relations(db_file):
     
-    relationList = ["has_hyperonym", "has_hyponym", "has_holonym", "has_meronym"]
-    relation_str = ["hyperonym", "hyponym", "holonym", "meronym"]
+    relationList = ["has_hyperonym", "has_hyponym", "has_holonym", "has_meronym", "has_member_holo"]
+    relation_str = ["hyperonym", "hyponym", "holonym", "meronym", "member_holonym"]
     conn = create_connection(db_file)
     cursor = conn.cursor()
     
@@ -114,33 +124,41 @@ def fetch_relations(db_file):
             i=0
             sset_word = sset._raw_synset.firstVariant.literal
             end = fetch_id(sset_word,cursor) 
+            sset_str = synset_str(sset_word, cursor)
             for rel in relationList:
                 rel_sset_list = sset.get_related_synsets(rel)
-                if rel_sset_list:
-                    rel_type.append(relation_str[i])                  
+                if rel_sset_list:                 
                     rel_word = get_literals(rel_sset_list)
+                    '''
+                    # FIXME: few words from wn are returned in form of single list "[word]" instead of "word".
+                    if len(rel_word) == 1:
+                        rel_word = rel_word[0]
+                    #~~~
+                   ''' 
                     start = []
-                    if len(rel_word) > 1:
+                    if len(rel_word) > 1 and rel_word[0] is not '[':
                         for word in rel_word:
-                            start_sset.append(word)
-                            end_sset.append(sset_word)
                             rel_type.append(relation_str[i])
-                            #print(word)
-                            start = (fetch_id(word,cursor))
-                            if start is not None:
-                                     start_vrtx.append(start[0])
-                            if end is not None:
-                                     end_vrtx.append(end[0])                                
+                            word_str = synset_str(word,cursor)
+                            start_sset.append(word_str)
+                            end_sset.append(sset_str)
+                            start = fetch_id(word,cursor)
+                            #if start is not None:
+                            start_vrtx.append(start)
+                            #if end is not None:
+                            end_vrtx.append(end)
+                            #else: end_vrtx.append("None")
                     elif len(rel_word) == 1:
-                        end_sset.append(sset_word)
-                        start_sset.append(rel_word)
+                        rel_type.append(relation_str[i]) 
+                        rel_str = synset_str(rel_word[0], cursor)
+                        end_sset.append(sset_str)
+                        start_sset.append(rel_str)
                         start = fetch_id(rel_word[0],cursor)
-                        rel_type.append(relation_str[i])
-                        #print(start)
-                        if start is not None:
-                            start_vrtx.append(start[0])
-                        if end is not None:
-                            end_vrtx.append(end[0])
+                        #if start is not None:
+                        start_vrtx.append(start)
+                        #if end is not None:
+                        end_vrtx.append(end)
+                        #else: end_vrtx.append("None")
                 i+=1
 
 def upload_relations(db_file):
