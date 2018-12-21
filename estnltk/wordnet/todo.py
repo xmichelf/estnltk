@@ -10,6 +10,7 @@ NameError: name 'raw_synset' is not defined
 '''
 #TODO: 2 import scripts in estwn_kb69a
 #kontroll: lugeda data txt faili ning lugeda ridade numbrid
+#-TODO uurida välja kuidas wn.get_related_synsets tagastab synsetid ok 
 
 #TODO: def synset class which contains igraph vertex. Holding attributes of current wn.py : 199.
 '''
@@ -19,3 +20,4 @@ def synset(LEMMA, POS):
     or POS = POS
 '''
 
+#TODO: wordnet_relation start_vertex not matching wordnet_entries id.

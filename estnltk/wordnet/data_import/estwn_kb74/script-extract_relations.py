@@ -10,7 +10,7 @@ from lxml import etree
 
 xml_sset_db = 'xml_synset.db'
 xml_relation_db = 'xml_relation.db'
-xml_rel_db = 'relation_complete.db'
+xml_rel_db = '../../data/estwn_kb74/wordnet_relation.db'
 
 join_str = '''CREATE TABLE synset_relations AS
             SELECT

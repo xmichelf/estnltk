@@ -16,14 +16,15 @@ for i in pos:
     for j in tmp:
         synsetList.append(j)        
 
-sset_db = 'wordnet_entries.db'
-relation_db = 'wordnet_relations-1.db'
+sset_db = '../../data/estwn_kb69/wordnet_entries.db'
+relation_db = '../../data/estwn_kb69/wordnet_relations.db'
 
 start_vrtx = []
 end_vrtx   = []
 end_sset   = []
 start_sset = []
 rel_type = []
+#sset_word =[]
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -55,11 +56,11 @@ def sqlTables(databaseLoc):
 
     sql_create_table = ''' CREATE TABLE IF NOT EXISTS wordnet_relations(
 
-                                        start_vertex INT NOT NULL,
-                                        start_synset TEXT NOT NULL,
-                                        end_synset TEXT NOT NULL,
-                                        end_vertex INT NOT NULL,
-                                        relation TEXT NOT NULL
+                                        start_vertex INT,
+                                        start_synset TEXT,
+                                        end_synset TEXT,
+                                        end_vertex INT,
+                                        relation TEXT
                                                     ); '''
     conn = create_connection(databaseLoc)
     if conn is not None:
@@ -181,7 +182,7 @@ def upload_relations(db_file):
             end_id     = end_vrtx[i]
             relation   = rel_type[i]
             cursor.execute("INSERT INTO wordnet_relations(start_vertex, start_synset, end_synset, end_vertex, relation)\
-                                                             VALUES(?,?,?,?,?)",(start_id, start_word, end_word, end_id,relation))
+                                            VALUES(?,?,?,?,?)",(start_vrtx[i], start_word, end_sset[i], end_vrtx[i],rel_type[i]))
         conn.commit()
 
 fetch_relations(sset_db)
