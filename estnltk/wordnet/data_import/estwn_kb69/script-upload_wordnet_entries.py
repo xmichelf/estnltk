@@ -5,7 +5,7 @@ Module which uploads all synsets and respective literals(lemmas) to 'wordnet_syn
 from estnltk.wordnet import wn
 import sqlite3
 
-synset_db = '../../data/estwn_kb69/wordnet_entries.db'
+synset_db = '../../data/estwn_kb69/wordnet_entry.db'
 
 pos = [wn.ADJ, wn.ADV, wn.VERB, wn.NOUN]
 synsetList=[]

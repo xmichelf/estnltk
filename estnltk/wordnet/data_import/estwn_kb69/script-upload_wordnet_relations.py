@@ -16,8 +16,8 @@ for i in pos:
     for j in tmp:
         synsetList.append(j)        
 
-sset_db = '../../data/estwn_kb69/wordnet_entries.db'
-relation_db = '../../data/estwn_kb69/wordnet_relations.db'
+sset_db = '../../data/estwn_kb69/wordnet_entry.db'
+relation_db = '../../data/estwn_kb69/wordnet_relation.db'
 
 start_vrtx = []
 end_vrtx   = []
@@ -144,22 +144,24 @@ def fetch_relations(db_file):
                             start_sset.append(word_str)
                             end_sset.append(sset_str)
                             start = fetch_id(word,cursor)
-                            #if start is not None:
-                            start_vrtx.append(start)
-                            #if end is not None:
-                            end_vrtx.append(end)
-                            #else: end_vrtx.append("None")
+                            if start is not None:
+                                start_vrtx.append(start)
+                            else: start_vrtx.append(None)
+                            if end is not None:
+                                end_vrtx.append(end)
+                            else: end_vrtx.append(None)
                     elif len(rel_word) == 1:
                         rel_type.append(relation_str[i]) 
                         rel_str = synset_str(rel_word[0], cursor)
                         end_sset.append(sset_str)
                         start_sset.append(rel_str)
                         start = fetch_id(rel_word[0],cursor)
-                        #if start is not None:
-                        start_vrtx.append(start)
-                        #if end is not None:
-                        end_vrtx.append(end)
-                        #else: end_vrtx.append("None")
+                        if start is not None:
+                            start_vrtx.append(start)
+                        else: start_vrtx.append(None)
+                        if end is not None:
+                            end_vrtx.append(end)
+                        else: end_vrtx.append(None)
                 i+=1
 
 def upload_relations(db_file):
@@ -171,18 +173,10 @@ def upload_relations(db_file):
     with conn:
         print("Uploading relations to db...")
         for i in range(len(start_vrtx)):
-            start_id   = start_vrtx[i]
-            #FIXME
-            if len(start_sset[i]) == 1:
-                start_word = start_sset[i][0]
-            else:
-                start_word = str(start_sset[i])
-            #~~~
-            end_word   = str(end_sset[i])
-            end_id     = end_vrtx[i]
-            relation   = rel_type[i]
+            if start_vrtx[i] == None:
+                continue
             cursor.execute("INSERT INTO wordnet_relations(start_vertex, start_synset, end_synset, end_vertex, relation)\
-                                            VALUES(?,?,?,?,?)",(start_vrtx[i], start_word, end_sset[i], end_vrtx[i],rel_type[i]))
+                                            VALUES(?,?,?,?,?)",(start_vrtx[i], start_sset[i], end_sset[i], end_vrtx[i],rel_type[i]))
         conn.commit()
 
 fetch_relations(sset_db)
