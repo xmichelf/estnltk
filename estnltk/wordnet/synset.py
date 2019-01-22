@@ -111,15 +111,18 @@ class Synset:
         """
 
         path = [self]
-        while path:
-            current_node = path.pop()
-            parents = current_node.get_related_synset(relation)
+        unvisited_relation = [(sset, 1) for sset in self.get_related_synset(relation)]
+
+        while len(unvisited_relation) > 1:
+            relation_depth = unvisited_relation.pop()
+            if relation_depth[1] > depth:
+                continue
+            parents = relation_depth[0].get_related_synset(relation)
 
             if not parents:
-                yield current_node
+                yield relation_depth[0]
             else:
-                path.extend(parents)
-    
+                unvisited_relation.extend( [(parent, relation_depth[1]+1) for parent in parents] )
     
     def hypernyms(self):
         """Retrieves all the hypernyms.
