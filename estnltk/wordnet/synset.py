@@ -1,19 +1,6 @@
 import sqlite3
 from wordnet import Wordnet
 
-
-'''
-tee wordnet.py fail milles on Wordnet klass, mille _init_ meetod teeb kaks SQLight andmebaasi ühendust
-
-üks wordnet_relations jaoks ja teine wordnet_entries jaoks
-
-sul on juba olemas kaks funktsiooni mida sellel klassil vaja läheb
-
-lisaks on sul vaja defineerida kõik wn.py olevad meetodid, mis ei alga alakriipsuga
-
-lisaks on sul vaja defineerida _del_ funktsioon, mis paneb SQLight ühendused kinni
-'''
-
 def _get_key_from_id(id, cursor):
     '''
     Returns synset word string "literal.pos.sense".
