@@ -64,8 +64,6 @@ class Synset:
         synset_id : int
         relation  : str
         '''     
-
-        #TODO:if relation not '', '', ' ', '.',';".... # if is str and "_ # else return []"
         if relation.isalnum():
             if self.wordnet == None:
                 return []
@@ -82,34 +80,50 @@ class Synset:
     
     def get_synset(self, synset_id):
 
-        return Synset(self.wordnet, synset_id)        
+        return Synset(self.wordnet, synset_id)    
 
-    def closure(self, relation, depth=float('inf')):   
+
+    def closure(self, relation, depth_threshold=float('inf'), return_depths=False):   
         
         """Finds all the ancestors of the synset using provided relation.
+
         Parameters
         ----------
-          relation : str
-        Name of the relation which is recursively used to fetch the ancestors.
+        relation : str
+            Name of the relation which is recursively used to fetch the ancestors.
+            
+        depth_treshold : int
+            Amount of recursive relations to yield. If left unchanged, then yields all recursive relations.
+
+        return_depths : bool
+            'return_depths = True' yields synset and amount of recursions.
+            'return_depths = False' yields only synset.
+            Default value 'False'.
+
         Returns
         -------
-          list of Synsets
-        Returns the ancestors of the synset via given relations.
+        Synset recursions of given relation via generator.
+
         """
 
-        path = [self]
-        unvisited_relation = [(sset, 1) for sset in self.get_related_synset(relation)]
+        node_stack = [self]
+        depth_stack = [0]
 
-        while len(unvisited_relation) > 1:
-            relation_depth = unvisited_relation.pop()
-            if relation_depth[1] > depth:
+        while len(node_stack):
+            node = node_stack.pop()
+            depth = depth_stack.pop()
+            if depth > depth_threshold:
                 continue
-            parents = relation_depth[0].get_related_synset(relation)
+            parents = node.get_related_synset(relation)
 
             if not parents:
-                yield relation_depth[0]
+                if return_depths not False:
+                    yield (node, depth)
+                else:
+                    yield node
             else:
-                unvisited_relation.extend( [(parent, relation_depth[1]+1) for parent in parents] )
+                node_stack.extend(parents)
+                depth_stack.extend([depth+1] * len(parents))
     
     def hypernyms(self):
         """Retrieves all the hypernyms.
@@ -179,15 +193,15 @@ class Synset:
         
         """
 
-        path = [self]
-        while path:
-            current_node = path.pop()
+        node_stack = [self]
+        while node_stack:
+            current_node = node_stack.pop()
             parents = current_node.hypernyms()
             
             if not parents:
                 yield current_node
             else:
-                path.extend(parents)
+                node_stack.extend(parents)
     
     def get_variants(self):
         """Returns variants/lemmas of the synset.
@@ -212,7 +226,6 @@ class Synset:
         return print("not implemented")#'\n'.join([variant.gloss for variant in self.estwn_id.variants if variant.gloss])
       
 
-      #TODO compare 1.4 wn lemma return value with entry.db values.
     def lemmas(self):
         """Returns the synset's lemmas/variants' literal represantions.
         
