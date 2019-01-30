@@ -1,5 +1,4 @@
-import sqlite3
-from wordnet import Wordnet
+
 
 def _get_key_from_id(id, cursor):
     '''
