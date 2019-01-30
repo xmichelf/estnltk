@@ -1,0 +1,69 @@
+- saad sa iga SQLight-i andmebaasi jaoks markdown dokumentatsiooni teha vastaval järgnevale mallile
+
+# Description of uca\_service\_names
+
+|Column Name|Description| Example|
+|---|---|---|
+| service\_code    | Service code                      | 000000000000066710       |
+| name             | Name of the service               | Kiiranalüüs testribaga   |
+| validity\_period | Period when name is valid         | [01.01.2007, ---]        |
+| last\_name       | Is it the last name definition    | TRUE                     |
+
+<Summary follows>
+
+iga tabeli veeru kohta pane üks rida
+
+ja näita tabelis ühte andmetabeli rida
+
+ma võin faili ise ära formaatida, aga sisu pead sa ise kirjutama
+
+<Summary> võib olla tühi. Märgi sinna olulised faktid, mis sind ennast on ka segadusse ajanud
+
+
+xml_synset.db
+
+
+Columna Name|   Description 		           | Example | 
+|----------------------|-------------------------------------------|---------------|
+|	id	       | generated synset vertex id (int) |	"0"	 |
+------------------------------------------------------------------------------------------------
+|	estwn_id  | estwn database synset id (string)   | estwn-et-8645-n |
+------------------------------------------------------------------------------------------------
+|  source_sense | literal word of synset (string)	   | kalapüük		|
+
+=======================================
+ROW EXAMPLE  	| "0"	| "estwn-et-8645-n"  |  "kalapüük" |
+=======================================
+
+xml_relation.db
+
+
+Columna Name|   Description 		           | Example | 
+|----------------------|-------------------------------------------|---------------|
+|   start_estwn  | start vertex estwn id (int)   | estwn-et-34038-n|
+------------------------------------------------------------------------------------------------
+|   end_estwn   | end vertex estwn id (int)   | estwn-et-8645-n |
+------------------------------------------------------------------------------------------------
+|  relation        | relation of start_estwn to end_estwn	(string)   | similar		|
+===========================================
+ROW EXAMPLE 		|"estwn-et-34038-n" |"estwn-et-8645-n"|"similar"|
+===========================================
+
+
+xml_lexical_entry.db
+
+
+Columna Name|   Description 		           | Example | 
+|----------------------|-------------------------------------------|---------------|
+|  estwn_id       | estwn database synset id (int) | estwn-et-41417-n|
+------------------------------------------------------------------------------------------------
+|   synset	       | synset string (string)	   | s-röntgen-n1 |
+------------------------------------------------------------------------------------------------
+|  written_form | literal word of synset (string)	   |röntgen	|
+|----------------------|-------------------------------------------|---------------|
+|   pos	       | part of speech 	(char)   | n |
+------------------------------------------------------------------------
+|  sense           | sense of word (int)	   | 1 |
+===================================================
+ROW EXAMPLE 		|"estwn-et-41417-n" | "s-röntgen-n1" |"röntgen" }| "n" |	"1" |
+===================================================

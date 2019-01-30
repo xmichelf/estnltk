@@ -179,7 +179,7 @@ class Synset:
         """
         return self.get_related_synset("holo_member")
 
-    def root_hypernyms(self):
+    def root_hypernyms(self, depth_threshold=float('inf'), return_depths=False):
 
         """Retrieves all the root hypernyms.
         
@@ -191,14 +191,23 @@ class Synset:
         """
 
         node_stack = [self]
-        while node_stack:
-            current_node = node_stack.pop()
-            parents = current_node.hypernyms()
-            
+        depth_stack = [0]
+
+        while len(node_stack):
+            node = node_stack.pop()
+            depth = depth_stack.pop()
+            if depth > depth_threshold:
+                continue
+            parents = node.hypernyms()
+
             if not parents:
-                yield current_node
+                if return_depths is not False:
+                    yield (node, depth)
+                else:
+                    yield node
             else:
                 node_stack.extend(parents)
+                depth_stack.extend([depth+1] * len(parents))
     
     def get_variants(self):
         """Returns variants/lemmas of the synset.
