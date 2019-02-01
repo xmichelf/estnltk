@@ -5,8 +5,6 @@ Comparison of wordnet relations with https://teksaurus.keeleressursid.ee relatio
 from estnltk.wordnet import Wordnet
 from estnltk.wordnet import Synset
 
-wn = Wordnet(version='74')
-
 source_relation = [ 'patustus', 'päevalillekollane', 'õigusetu', 'puhiseja', 'pageja', 'miktsioonuriin',  'Millsi test', 'liigutustundlikkus', 'limaskestabarjäär', 'tuššima']
 target_relations = {}
 for relation in source_relation:
@@ -27,15 +25,14 @@ target_relations['liigutustundlikkus']['hypernym'] = {'tundehellus'}
 target_relations['limaskestabarjäär']['hypernym'] = {'atribuut'}
 target_relations['tuššima']['hypernym'] = {'joonistama'}
 
+wn = Wordnet(version='74')
 sourceId = [2,9,815,12,13,14,15,16,17,18]
+
+
 def test_relations():
     for i in sourceId:
         source_name = Synset(wn, i).name[:-4]
         relations = Synset(wn,i).get_related_synset()
-        if relations is None:
-            assert 'None' in target_relations[source_name][rel_type]
-            continue
-            
         for relation in relations:
             if relation[0].name is None:
                 assert 'None' in target_relations[source_name]['None']
