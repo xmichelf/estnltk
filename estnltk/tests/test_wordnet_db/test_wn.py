@@ -26,13 +26,12 @@ target_relations['limaskestabarjäär']['hypernym'] = {'atribuut'}
 target_relations['tuššima']['hypernym'] = {'joonistama'}
 
 wn = Wordnet(version='74')
-sourceId = [2,9,815,12,13,14,15,16,17,18]
-
 
 def test_relations():
-    for i in sourceId:
-        source_name = Synset(wn, i).name[:-4]
-        relations = Synset(wn,i).get_related_synset()
+    for source_node in source_relation:
+        id = wn.get_synset(source_node)[0]
+        source_name = Synset(wn, id).name[:-4]
+        relations = Synset(wn, id).get_related_synset() 
         for relation in relations:
             if relation[0].name is None:
                 assert 'None' in target_relations[source_name]['None']
