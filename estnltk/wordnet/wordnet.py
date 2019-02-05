@@ -41,8 +41,8 @@ class Wordnet:
     def __del__(self):
         self.conn.close()
         
-    def get_synset(self, synset_id):
+    def get_synset(self, synset_literal):
     
         with self.conn:
-            self.cur.execute('''SELECT literal FROM wordnet_entry WHERE id = {} ''' .format(synset_id))
+            self.cur.execute("SELECT id FROM wordnet_entry WHERE literal = '{}'".format(synset_literal))
             return [row[0] for row in self.cur.fetchall()]
