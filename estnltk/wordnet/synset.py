@@ -13,8 +13,10 @@ def _get_key_from_id(id, cursor):
     
     return '.'.join([literal,pos,sense])
 
+
 class SynsetException(Exception):
     pass
+
 
 class Synset:
     """Represents a WordNet synset.
@@ -75,9 +77,12 @@ class Synset:
             return []
 
     
-    def get_synset(self, synset_id):
+    def get_synset(self, synset_id=None):
 
-        return Synset(self.wordnet, synset_id)    
+        if synset_id is None:
+            return Synset(self.wordnet, self.id)
+        else:
+            return Synset(self.wordnet, synset_id)    
 
 
     def closure(self, relation, depth_threshold=float('inf'), return_depths=False):   
@@ -121,63 +126,7 @@ class Synset:
             else:
                 node_stack.extend(parents)
                 depth_stack.extend([depth+1] * len(parents))
-    
-    def hypernyms(self):
-        """Retrieves all the hypernyms.
-        
-        Returns
-        -------
-          list of Synsets
-        Synsets which are linked via hypernymy relation.
-        
-        """
 
-        return self.get_related_synset("hypernym")
-
-    def hyponyms(self):
-        """Retrieves all the hyponyms.
-        
-        Returns
-        -------
-          list of Synsets
-        Synsets which are linked via hyponymy relation.
-        
-        """
-        
-        return self.get_related_synset("hyponym")
-    
-    def holonyms(self):
-        """Retrieves all the holonyms.
-        
-        Returns
-        -------
-          list of Synsets
-        Synsets which are linked via holonymy relation.
-        
-        """
-        return self.get_related_synset("holonym")
-
-    def meronyms(self):
-        """Retrieves all the meronyms.
-        
-        Returns
-        -------
-          list of Synsets
-        Synsets which are linked via meronymy relation.
-        
-        """
-        return self.get_related_synset("meronym")
-
-    def member_holonyms(self):
-        """Retrieves all the member holoynms.
-        
-        Returns
-        -------
-          list of Synsets
-        Synsets which are "wholes" of what the synset represents.
-        
-        """
-        return self.get_related_synset("holo_member")
 
     def root_hypernyms(self, depth_threshold=float('inf'), return_depths=False):
 
@@ -200,14 +149,78 @@ class Synset:
                 continue
             parents = node.hypernyms()
 
-            if not parents:
+            if not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
                 else:
-                    yield node
+                    yield node        
             else:
                 node_stack.extend(parents)
                 depth_stack.extend([depth+1] * len(parents))
+
+
+    
+    def hypernyms(self):
+        """Retrieves all the hypernyms.
+        
+        Returns
+        -------
+          list of Synsets
+        Synsets which are linked via hypernymy relation.
+        
+        """
+
+        return self.get_related_synset("hypernym")
+
+
+    def hyponyms(self):
+        """Retrieves all the hyponyms.
+        
+        Returns
+        -------
+          list of Synsets
+        Synsets which are linked via hyponymy relation.
+        
+        """
+        
+        return self.get_related_synset("hyponym")
+
+    
+    def holonyms(self):
+        """Retrieves all the holonyms.
+        
+        Returns
+        -------
+          list of Synsets
+        Synsets which are linked via holonymy relation.
+        
+        """
+        return self.get_related_synset("holonym")
+
+
+    def meronyms(self):
+        """Retrieves all the meronyms.
+        
+        Returns
+        -------
+          list of Synsets
+        Synsets which are linked via meronymy relation.
+        
+        """
+        return self.get_related_synset("meronym")
+
+
+    def member_holonyms(self):
+        """Retrieves all the member holoynms.
+        
+        Returns
+        -------
+          list of Synsets
+        Synsets which are "wholes" of what the synset represents.
+        
+        """
+        return self.get_related_synset("holo_member")
+
     
     def get_variants(self):
         """Returns variants/lemmas of the synset.
@@ -219,6 +232,7 @@ class Synset:
         
         """
         print("Not implemented.")
+
       
     def definition(self):
         """Returns the definition of the synset.
