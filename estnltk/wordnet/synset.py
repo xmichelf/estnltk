@@ -70,7 +70,12 @@ class Synset:
         if relation == None:
             self.wordnet.cur.execute('''SELECT start_vertex,relation FROM wordnet_relation WHERE end_vertex = '{}' '''.format(self.id))
             return [(Synset(self.wordnet, row[0]), row[1]) for row in self.wordnet.cur.fetchall()]
-        elif relation.isalnum():
+        elif relation:
+            try:
+                relation.isalnum()
+            except Exception as e:
+                raise SynsetException("Could not query database with: \n\t: {}.".format(e))
+
             self.wordnet.cur.execute('''SELECT start_vertex FROM wordnet_relation WHERE end_vertex = '{}' AND relation = '{}' '''.format(self.id, relation))
             return [Synset(self.wordnet, row[0]) for row in self.wordnet.cur.fetchall()]
         else:
@@ -118,7 +123,7 @@ class Synset:
                 continue
             parents = node.get_related_synset(relation)
 
-            if not parents:
+            if not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
                 else:
