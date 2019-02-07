@@ -123,7 +123,13 @@ class Synset:
                 continue
             parents = node.get_related_synset(relation)
 
-            if not parents or depth == depth_threshold:
+            if not parents and depth == 0:
+                if return_depths is not False:
+                    yield (None,depth)
+                else:
+                    yield None
+
+            elif not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
                 else:
@@ -155,8 +161,10 @@ class Synset:
             parents = node.hypernyms()
 
             if not parents and depth == 0:
-                yield None
-
+                if return_depths is not False:
+                    yield (None,0)
+                else:
+                    yield None
             elif not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
