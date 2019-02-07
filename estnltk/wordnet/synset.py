@@ -121,11 +121,20 @@ class Synset:
             depth = depth_stack.pop()
             if depth > depth_threshold:
                 continue
-            parents = node.get_related_synset(relation)
+
+            #TODO: problem to get parents when node == 'null'
+            if relation is None:
+                #this condition is false.
+                if node is 'null':
+                    parents = None
+                else:
+                    parents = node.get_related_synset(relation)[0]
+            else:
+                parents = node.get_related_synset(relation)
 
             if not parents and depth == 0:
                 if return_depths is not False:
-                    yield (None,depth)
+                    yield (None, None)
                 else:
                     yield None
 
@@ -162,7 +171,7 @@ class Synset:
 
             if not parents and depth == 0:
                 if return_depths is not False:
-                    yield (None,0)
+                    yield (None, None)
                 else:
                     yield None
             elif not parents or depth == depth_threshold:
