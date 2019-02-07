@@ -154,7 +154,10 @@ class Synset:
                 continue
             parents = node.hypernyms()
 
-            if not parents or depth == depth_threshold:
+            if not parents and depth == 0:
+                yield None
+
+            elif not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
                 else:
