@@ -1,5 +1,6 @@
 import sqlite3
 import os.path
+from wordnet import Synset #TODO cannot import Synset in notebook.
 
 class WordnetException(Exception):
     pass
@@ -41,8 +42,10 @@ class Wordnet:
     def __del__(self):
         self.conn.close()
         
-    def get_synset(self, synset_literal):
+    def get_synset(self, pos, sense, literal):
     
         with self.conn:
-            self.cur.execute("SELECT id FROM wordnet_entry WHERE literal = '{}'".format(synset_literal))
-            return [row[0] for row in self.cur.fetchall()]
+            self.cur.execute("SELECT id FROM wordnet_entry WHERE pos = '{}' AND sense = '{}' AND literal = '{}' LIMIT 1".format(pos, sense, literal))
+            synset_id = self.cur.fetchone()
+
+            return Synset(self.wordnet, synset_id)    
