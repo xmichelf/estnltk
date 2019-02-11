@@ -48,10 +48,10 @@ class Synset:
 
         self.wordnet = wordnet
         self.id = id
-        self.wordnet.cur.execute("SELECT estwn_id, pos, sense, literal FROM wordnet_entry WHERE id = {} LIMIT 1".format(id))
-        self.estwn_id, self.pos, self.sense, self.literal = self.wordnet.cur.fetchone()
-        self.name = '{}.{}.{}'.format(self.literal, self.pos, self.sense)
-        
+        self.wordnet.cur.execute("SELECT estwn_id, pos, sense, synset_name, literal FROM wordnet_entry WHERE id = ? LIMIT 1",(id,))
+        self.estwn_id, self.pos, self.sense, name, self.literal = self.wordnet.cur.fetchone()
+        self.name = '{}.{}.{}'.format(name, self.pos, self.sense)
+                
 
     def __eq__(self,other):
         
@@ -112,33 +112,20 @@ class Synset:
         Synset recursions of given relation via generator.
 
         """
+        if depth_threshold < 1:
+            return 
 
-        node_stack = [self]
-        depth_stack = [0]
+        node_stack = self.get_related_synset(relation)
+        depth_stack = [1]*len(node_stack)
 
         while len(node_stack):
             node = node_stack.pop()
             depth = depth_stack.pop()
             if depth > depth_threshold:
                 continue
+            parents = node.get_related_synset(relation)
 
-            #TODO: problem to get parents when node == 'null'
-            if relation is None:
-                #this condition is false.
-                if node is 'null':
-                    parents = None
-                else:
-                    parents = node.get_related_synset(relation)[0]
-            else:
-                parents = node.get_related_synset(relation)
-
-            if not parents and depth == 0:
-                if return_depths is not False:
-                    yield (None, None)
-                else:
-                    yield None
-
-            elif not parents or depth == depth_threshold:
+            if not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
                 else:
@@ -158,9 +145,11 @@ class Synset:
         Roots via hypernymy relation.
         
         """
+        if depth_threshold < 1:
+            return 
 
-        node_stack = [self]
-        depth_stack = [0]
+        node_stack = self.hypernyms()
+        depth_stack = [1]*len(node_stack)
 
         while len(node_stack):
             node = node_stack.pop()
@@ -168,13 +157,8 @@ class Synset:
             if depth > depth_threshold:
                 continue
             parents = node.hypernyms()
-
-            if not parents and depth == 0:
-                if return_depths is not False:
-                    yield (None, None)
-                else:
-                    yield None
-            elif not parents or depth == depth_threshold:
+                    
+            if not parents or depth == depth_threshold:
                 if return_depths is not False:
                     yield (node, depth)
                 else:
