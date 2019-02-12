@@ -127,7 +127,7 @@ def test_root_hypernyms():
                 synset_word = relation[0].name[:-4]
                 depth_2 = relation[1]
                 source_word = source.name[:-4]
-                assert synset_word in target_depth[source_word][depth]
+                assert synset_word in target_depth[source_word][depth_2]
 
 
 def test_closure():
