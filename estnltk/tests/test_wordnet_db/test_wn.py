@@ -62,6 +62,7 @@ target_relations['liigutustundlikkus']['hypernym'] = {'tundehellus'}
 target_relations['limaskestabarjäär']['hypernym'] = {'atribuut'}
 target_relations['tuššima']['hypernym'] = {'joonistama'}
 
+
 def test_relations():
     for source_node in source_relation:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
@@ -73,6 +74,7 @@ def test_relations():
                 continue
             rel_name = relation[0].name[0:-4]
             assert rel_name in target_relations[source_name]
+
 
 source_nodes = ['õigusetu', 'väikettevõtja', 'bombard']
 target_depth = {}
@@ -110,8 +112,6 @@ source_pos['bombard'] = 'n'
 source_sense['bombard'] = 1
 
 
-
-
 def test_root_hypernyms():
 
     #root_hypernyms test
@@ -122,7 +122,7 @@ def test_root_hypernyms():
 
         for depth in source.root_hypernyms(depth_threshold=float('inf'), return_depths=True):
             threshold = depth[1]
-            
+
             for relation in source.root_hypernyms(depth_threshold=threshold, return_depths=True):
                 synset_word = relation[0].name[:-4]
                 depth_2 = relation[1]
