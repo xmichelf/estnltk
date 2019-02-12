@@ -1,6 +1,6 @@
 import sqlite3
 import os.path
-from wordnet import Synset #TODO cannot import Synset in notebook.
+from synset import Synset
 
 class WordnetException(Exception):
     pass
@@ -31,7 +31,7 @@ class Wordnet:
         try: 
             self.conn = sqlite3.connect(wn_entry)
             self.cur = self.conn.cursor()
-            self.conn.execute("ATTACH DATABASE '{}' AS wordnet_relation".format(wn_relation))
+            self.conn.execute("ATTACH DATABASE ? AS wordnet_relation", (wn_relation,))
 
         except sqlite3.OperationalError as e:
             raise WordnetException("Invalid wordnet file: \n\tsqlite connection error: {}".format(e))
@@ -42,10 +42,14 @@ class Wordnet:
     def __del__(self):
         self.conn.close()
         
-    def get_synset(self, pos, sense, literal):
-    
+    def get_synset(self, pos, sense, synset_name):
         with self.conn:
-            self.cur.execute("SELECT id FROM wordnet_entry WHERE pos = '{}' AND sense = '{}' AND literal = '{}' LIMIT 1".format(pos, sense, literal))
-            synset_id = self.cur.fetchone()
-
-            return Synset(self.wordnet, synset_id)    
+            if pos:
+                self.cur.execute("SELECT id FROM wordnet_entry WHERE pos = ? AND sense = ? AND synset_name = ? LIMIT 1", (pos, sense, synset_name))
+                synset_id =  self.cur.fetchone()
+                if synset_id is not None:
+                    return Synset(self, synset_id[0])
+                else:
+                    return
+            else: 
+                return
