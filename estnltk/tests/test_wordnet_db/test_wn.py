@@ -114,17 +114,12 @@ def test_root_hypernyms():
     #root_hypernyms test
     for source_node in source_nodes:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
-        assert source_pos[source_node] == source.pos
-        assert source_sense[source_node] == source.sense
-
-        for depth in source.root_hypernyms(depth_threshold=float('inf'), return_depths=True):
-            threshold = depth[1]
-
-            for relation in source.root_hypernyms(depth_threshold=threshold, return_depths=True):
-                synset_word = relation[0].name[:-4]
-                depth_2 = relation[1]
+        source_word = source.name[:-4]
+        for depth in range(1, len(target_depth[source_word])+1):
+            result = list(source.root_hypernyms(depth_threshold=depth, return_depths=False))
+            for sset in result:
                 source_word = source.name[:-4]
-                assert synset_word in target_depth[source_word][depth_2]
+                assert sset.name[:-4] in target_depth[source_word][depth]
 
 
 def test_closure():
