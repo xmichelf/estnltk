@@ -6,13 +6,32 @@ from estnltk.wordnet import Synset
 
 wn = Wordnet(version='74')
 
-source_literal = [ 'patustus', 'päevalillekollane', 'õigusetu', 'puhiseja', 'pageja', 'miktsioonuriin',  'Millsi test', 'liigutustundlikkus', 'limaskestabarjäär', 'tuššima']
+source_relation = [ 'patustamine', 'päevalillekollane', 'õigusetu', 'puhiseja', 'pageja', 'miktsioonuriin',  'Millsi test', 'liigutustundlikkus', 'limaskestabarjäär', 'tuššima']
+
+target_relations = {}
+for relation in source_relation:
+    target_relations[relation] = {}
+target_relations['patustamine']['hypernym'] = {'käitumisakt'}
+target_relations['patustamine']['involved'] =  {'patutegu'}
+target_relations['patustamine']['hyponym'] = {'väärdumine'}
+target_relations['päevalillekollane']['hypernym'] = {'kollane'}
+target_relations['õigusetu']['None'] = {'None'}
+target_relations['puhiseja']['agent'] = {'puhklema'}
+target_relations['pageja']['similar'] = {'reduline'}
+target_relations['pageja']['agent'] = {'pakku minema','redu'}
+target_relations['pageja']['hyponym'] = {'putkaja'}
+target_relations['miktsioonuriin']['hypernym'] = {'piss'}
+target_relations['Millsi test']['involved_patient'] = {'tennisisti küünarliiges'}
+target_relations['Millsi test']['hypernym'] = {'kats'}
+target_relations['liigutustundlikkus']['hypernym'] = {'tundehellus'}
+target_relations['limaskestabarjäär']['hypernym'] = {'atribuut'}
+target_relations['tuššima']['hypernym'] = {'joonistama'}
 
 source_pos = {}
 source_sense = {}
 
-source_pos['patustus'] = 'n'
-source_sense['patustus'] = 1
+source_pos['patustamine'] = 'n'
+source_sense['patustamine'] = 1
 
 source_pos['päevalillekollane'] = 'a'
 source_sense['päevalillekollane'] = 1
@@ -41,63 +60,37 @@ source_sense['limaskestabarjäär'] = 1
 source_pos['tuššima'] = 'v'
 source_sense['tuššima'] = 1
 
-
-target_relations = {}
-for relation in source_literal:
-    target_relations[relation] = {}
-
-target_relations['patustus']['hyponym'] = {'käitumisakt'}
-target_relations['patustus']['involved'] =  {'patutegu'}
-target_relations['patustus']['hypernym'] = {'väärdumine'}
-target_relations['päevalillekollane']['hypernym'] = {'kollane'}
-target_relations['õigusetu'][] = {}
-target_relations['puhiseja']['agent'] = {'puhklema'}
-target_relations['pageja']['similar'] = {'reduline'}
-target_relations['pageja']['agent'] = {'pakku minema','redu'}
-target_relations['pageja']['hyponym'] = {'putkaja'}
-target_relations['miktsioonuriin']['hypernym'] = {'piss'}
-target_relations['Millsi test']['involved_patient'] = {'tennisisti küünarliiges'}
-target_relations['Millsi test']['hypernym'] = {'kats'}
-target_relations['liigutustundlikkus']['hypernym'] = {'tundehellus'}
-target_relations['limaskestabarjäär']['hypernym'] = {'atribuut'}
-target_relations['tuššima']['hypernym'] = {'joonistama'}
-
-
-def test_relations():
-    for source_node in source_relation:
-        source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
-        source_name = source.name[:-4]
-        relations = source.get_related_synset() 
-        for relation in relations:
-            if relation[0].name is None:
-                assert None in target_relations[source_name][None]
-                continue
-            rel_name = relation[0].name[0:-4]
-            assert rel_name in target_relations[source_name]
-
-
 source_nodes = ['õigusetu', 'väikettevõtja', 'bombard']
 target_depth = {}
+
 for key in source_nodes:
     target_depth[key] = {}
+    
+#emtpy relation    
+target_depth['õigusetu'][1] = {}
 
-target_depth['väikettevõtja'][1] = {'ettevõtja', 'väikettevõte'}
+#hypernym
+target_depth['väikettevõtja'][1] = {'ettevõtja', 'väikeettevõte'}
 target_depth['väikettevõtja'][2] = {'bisnismen', 'käitis'}
 target_depth['väikettevõtja'][3] = {'inimene', 'asutus'}
 target_depth['väikettevõtja'][4] = {'elusolend', 'sotsiaalne_grupp'}
 target_depth['väikettevõtja'][5] = {'olend', 'grupp'}
 target_depth['väikettevõtja'][6] = {'olev', 'miski'}
+
+#outbrancing hypernym
 target_depth['bombard'][1] = {'kahur'}
 target_depth['bombard'][2] = {'mehhanism', 'tulirelv'}
 target_depth['bombard'][3] = {'funktsioneerimine', 'riistapuu', 'laskerelv'}
 target_depth['bombard'][4] = {'töö', 'vahend', 'relv'}
 target_depth['bombard'][5] = {'tegevus', 'asi', 'riistapuu', 'tegevus'}
-target_depth['bombard'][6] = {'objekt', 'vahend'}
-target_depth['bombard'][7] = {'olev', 'asi'}
-target_depth['bombard'][8] = {'objekt'}
-target_depth['bombard'][9] = {'olev'}
+target_depth['bombard'][6] = {'tegevus', 'objekt', 'vahend'}
+target_depth['bombard'][7] = {'tegevus', 'olev', 'asi'}
+target_depth['bombard'][8] = {'tegevus', 'olev', 'objekt'}
+target_depth['bombard'][9] = {'tegevus', 'olev'}
 
-target_depth['õigusetu'][1] = {}
+#hyponym for closure test
+target_depth['kiin'][1] = {'ninakiin', 'nahakiin', 'maokiin'}
+target_depth['kiin'][2] = {'lamba-ninakiin', 'põhjapõdra-nahakiin', 'veise-nahakiin', 'maokiin'}
 
 #id 815
 source_pos['õigusetu'] = 'a'
@@ -111,7 +104,11 @@ source_sense['väikettevõtja'] = 1
 source_pos['bombard'] = 'n'
 source_sense['bombard'] = 1
 
+#id 2943
+source_pos['kiin'] = 'n'
+source_sense['kiin'] = 3
 
+#TODO: get_synset(**target['word']['relation'])
 def test_root_hypernyms():
 
     #root_hypernyms test
@@ -131,14 +128,18 @@ def test_root_hypernyms():
 
 
 def test_closure():
+    # test with hyponym relation as well.
+    source_nodes.append('kiin')
     #closure test
+    relation='hypernym'
     for source_node in source_nodes:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
-        for depth in source.closure(relation='hypernym', depth_threshold=float('inf'), return_depths=True):
-            threshold = depth[1]
+        if source.name[:-4] == 'kiin':
+            relation = 'hyponym'
 
-            for relation in source.closure(relation='hypernym', depth_threshold=threshold, return_depths=True):
-                synset_word = relation[0].name[:-4]
-                depth_2 = relation[1]
+        source_word = source.name[:-4]
+        for depth in range(1, len(target_depth[source_word])+1):
+            results = list(source.closure(relation, depth_threshold=depth, return_depths=False))
+            for result in results:
                 source_word = source.name[:-4]
-                assert synset_word in target_depth[source_word][depth_2]
+                assert result.name[:-4] in target_depth[source_word][depth]
