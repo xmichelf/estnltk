@@ -108,7 +108,20 @@ source_sense['bombard'] = 1
 source_pos['kiin'] = 'n'
 source_sense['kiin'] = 3
 
-#TODO: get_synset(**target['word']['relation'])
+
+def test_relations():
+    for source_node in source_relation:
+        source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
+        source_name = source.name[:-4]
+        relations = source.get_related_synset() 
+        for relation in relations:
+            if relation[0].name is None:
+                assert None in target_relations[source_name][None]
+                continue
+            rel_name = relation[0].name[0:-4]
+            assert rel_name in target_relations[source_name]
+
+
 def test_root_hypernyms():
 
     #root_hypernyms test
