@@ -11,20 +11,20 @@ source_relation = [ 'patustamine', 'päevalillekollane', 'õigusetu', 'puhiseja'
 target_relations = {}
 for relation in source_relation:
     target_relations[relation] = {}
-target_relations['patustamine']['hypernym'] = {'käitumisakt'}
-target_relations['patustamine']['involved'] =  {'patutegu'}
+target_relations['patustamine']['hypernym'] = {'käitumine'}
+target_relations['patustamine']['involved'] =  {'patt'}
 target_relations['patustamine']['hyponym'] = {'väärdumine'}
 target_relations['päevalillekollane']['hypernym'] = {'kollane'}
-target_relations['õigusetu']['None'] = {'None'}
-target_relations['puhiseja']['agent'] = {'puhklema'}
+target_relations['õigusetu']['null'] = {None}
+target_relations['puhiseja']['agent'] = {'puhkima'}
 target_relations['pageja']['similar'] = {'reduline'}
-target_relations['pageja']['agent'] = {'pakku minema','redu'}
+target_relations['pageja']['agent'] = {'põgenema','redu'}
 target_relations['pageja']['hyponym'] = {'putkaja'}
-target_relations['miktsioonuriin']['hypernym'] = {'piss'}
-target_relations['Millsi test']['involved_patient'] = {'tennisisti küünarliiges'}
+target_relations['miktsioonuriin']['hypernym'] = {'kusi'}
+target_relations['Millsi test']['involved_patient'] = {'tennisisti_küünarliiges'}
 target_relations['Millsi test']['hypernym'] = {'kats'}
-target_relations['liigutustundlikkus']['hypernym'] = {'tundehellus'}
-target_relations['limaskestabarjäär']['hypernym'] = {'atribuut'}
+target_relations['liigutustundlikkus']['hypernym'] = {'sensitiivsus'}
+target_relations['limaskestabarjäär']['hypernym'] = {'omadus'}
 target_relations['tuššima']['hypernym'] = {'joonistama'}
 
 source_pos = {}
@@ -88,7 +88,7 @@ target_depth['bombard'][7] = {'tegevus', 'olev', 'asi'}
 target_depth['bombard'][8] = {'tegevus', 'olev', 'objekt'}
 target_depth['bombard'][9] = {'tegevus', 'olev'}
 
-#hyponym for closure test
+target_depth['kiin'] = {}
 target_depth['kiin'][1] = {'ninakiin', 'nahakiin', 'maokiin'}
 target_depth['kiin'][2] = {'lamba-ninakiin', 'põhjapõdra-nahakiin', 'veise-nahakiin', 'maokiin'}
 
@@ -115,12 +115,12 @@ def test_relations():
         source_name = source.name[:-4]
         relations = source.get_related_synset() 
         for relation in relations:
-            if relation[0].name is None:
-                assert None in target_relations[source_name][None]
+            rel_type = relation[1]
+            if rel_type == 'null':
+                assert None in target_relations[source_name][rel_type]
                 continue
             rel_name = relation[0].name[0:-4]
-            assert rel_name in target_relations[source_name]
-
+            assert rel_name in target_relations[source_name][rel_type]
 
 def test_root_hypernyms():
 
@@ -137,6 +137,10 @@ def test_root_hypernyms():
 
 def test_closure():
     # test with hyponym relation as well.
+    #hyponym for closure test
+    target_depth['kiin'] = {}
+    target_depth['kiin'][1] = {'ninakiin', 'nahakiin', 'maokiin'}
+    target_depth['kiin'][2] = {'lamba-ninakiin', 'põhjapõdra-nahakiin', 'veise-nahakiin', 'maokiin'}
     source_nodes.append('kiin')
     #closure test
     relation_type='hypernym'
