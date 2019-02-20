@@ -139,7 +139,7 @@ def test_closure():
     # test with hyponym relation as well.
     source_nodes.append('kiin')
     #closure test
-    relation='hypernym'
+    relation_type='hypernym'
     for source_node in source_nodes:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
         if source.name[:-4] == 'kiin':
@@ -147,7 +147,7 @@ def test_closure():
 
         source_word = source.name[:-4]
         for depth in range(1, len(target_depth[source_word])+1):
-            results = list(source.closure(relation, depth_threshold=depth, return_depths=False))
+            results = list(source.closure(relation=relation_type, depth_threshold=depth, return_depths=False))
             for result in results:
                 source_word = source.name[:-4]
                 assert result.name[:-4] in target_depth[source_word][depth]
