@@ -7,10 +7,6 @@ from estnltk.wordnet.synset import Synset
 
 wn = Wordnet(version='74')
 
-
-source_pos = {}
-source_sense = {}
-
 source_pos = {'patustamine': 'n',
               'päevalillekollane': 'a',
               'õigusetu': 'a', # id 815
@@ -42,6 +38,7 @@ source_sense = {'patustamine': 1,
                 }
 
 
+
 def test_relations():
     source_relation = [ 'patustamine', 'päevalillekollane', 'õigusetu', 'puhiseja', 'pageja', 'miktsioonuriin',  'Millsi test', 'liigutustundlikkus', 'limaskestabarjäär', 'tuššima']
 
@@ -64,7 +61,6 @@ def test_relations():
     target_relations['limaskestabarjäär']['hypernym'] = {'omadus'}
     target_relations['tuššima']['hypernym'] = {'joonistama'}
 
-
     for source_node in source_relation:
         source = wn.get_synset(source_node, source_pos[source_node], source_sense[source_node])
         if source is None:
@@ -78,6 +74,7 @@ def test_relations():
                 continue
             rel_name = relation[0].name[0:-4]
             assert rel_name in target_relations[source_name][rel_type]
+
 
 def test_root_hypernyms():
     source_nodes = ['õigusetu', 'väikettevõtja', 'bombard']
@@ -107,7 +104,6 @@ def test_root_hypernyms():
     target_depth['bombard'][7] = {'tegevus', 'olev', 'asi'}
     target_depth['bombard'][8] = {'tegevus', 'olev', 'objekt'}
     target_depth['bombard'][9] = {'tegevus', 'olev'}
-
 
     #root_hypernyms test
     for source_node in source_nodes:
