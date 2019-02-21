@@ -112,6 +112,8 @@ source_sense['kiin'] = 3
 def test_relations():
     for source_node in source_relation:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
+        if source == None:
+            continue
         source_name = source.name[:-4]
         relations = source.get_related_synset() 
         for relation in relations:
@@ -127,6 +129,8 @@ def test_root_hypernyms():
     #root_hypernyms test
     for source_node in source_nodes:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
+        if source == None:
+            continue
         source_word = source.name[:-4]
         for depth in range(1, len(target_depth[source_word])+1):
             result = list(source.root_hypernyms(depth_threshold=depth, return_depths=False))
@@ -146,6 +150,8 @@ def test_closure():
     relation_type='hypernym'
     for source_node in source_nodes:
         source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
+        if source == None:
+            continue
         if source.name[:-4] == 'kiin':
             relation = 'hyponym'
 
