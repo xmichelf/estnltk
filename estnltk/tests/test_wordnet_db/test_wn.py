@@ -1,8 +1,9 @@
 '''
 Comparison of wordnet relations with https://teksaurus.keeleressursid.ee relations.
 '''
+
 from estnltk.wordnet import Wordnet
-from estnltk.wordnet import Synset
+from estnltk.wordnet.synset import Synset
 
 wn = Wordnet(version='74')
 
@@ -88,9 +89,6 @@ target_depth['bombard'][7] = {'tegevus', 'olev', 'asi'}
 target_depth['bombard'][8] = {'tegevus', 'olev', 'objekt'}
 target_depth['bombard'][9] = {'tegevus', 'olev'}
 
-target_depth['kiin'] = {}
-target_depth['kiin'][1] = {'ninakiin', 'nahakiin', 'maokiin'}
-target_depth['kiin'][2] = {'lamba-ninakiin', 'põhjapõdra-nahakiin', 'veise-nahakiin', 'maokiin'}
 
 #id 815
 source_pos['õigusetu'] = 'a'
@@ -111,8 +109,8 @@ source_sense['kiin'] = 3
 
 def test_relations():
     for source_node in source_relation:
-        source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
-        if source == None:
+        source = wn.get_synset(source_node, source_pos[source_node], source_sense[source_node])
+        if source is None:
             continue
         source_name = source.name[:-4]
         relations = source.get_related_synset() 
@@ -125,11 +123,12 @@ def test_relations():
             assert rel_name in target_relations[source_name][rel_type]
 
 def test_root_hypernyms():
-
+    #for coverage
+    source_nodes = ['õigusetu', 'väikettevõtja', 'bombard']
     #root_hypernyms test
     for source_node in source_nodes:
-        source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
-        if source == None:
+        source = wn.get_synset(source_node, source_pos[source_node], source_sense[source_node])
+        if source is None:
             continue
         source_word = source.name[:-4]
         for depth in range(1, len(target_depth[source_word])+1):
@@ -149,11 +148,11 @@ def test_closure():
     #closure test
     relation_type='hypernym'
     for source_node in source_nodes:
-        source = wn.get_synset(source_pos[source_node], source_sense[source_node], source_node)
-        if source == None:
+        source = wn.get_synset(source_node, source_pos[source_node], source_sense[source_node])
+        if source is None:
             continue
         if source.name[:-4] == 'kiin':
-            relation = 'hyponym'
+            relation_type = 'hyponym'
 
         source_word = source.name[:-4]
         for depth in range(1, len(target_depth[source_word])+1):
@@ -161,3 +160,4 @@ def test_closure():
             for result in results:
                 source_word = source.name[:-4]
                 assert result.name[:-4] in target_depth[source_word][depth]
+test_closure()
