@@ -16,3 +16,5 @@ from .prettyprinter import PrettyPrinter
 from .grammar import *
 from .database import elastic
 from .tokenizers.word_tokenizer import EstWordTokenizer
+from estnltk.wordnet import Wordnet
+from estnltk.wordnet.synset import Synset
