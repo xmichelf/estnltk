@@ -1,6 +1,6 @@
 import sqlite3
 import os.path
-from synset import Synset
+from .synset import Synset
 
 class WordnetException(Exception):
     pass
@@ -42,7 +42,7 @@ class Wordnet:
     def __del__(self):
         self.conn.close()
         
-    def get_synset(self, pos, sense, synset_name):
+    def get_synset(self, synset_name, pos, sense):
         with self.conn:
             if pos:
                 self.cur.execute("SELECT id FROM wordnet_entry WHERE pos = ? AND sense = ? AND synset_name = ? LIMIT 1", (pos, sense, synset_name))

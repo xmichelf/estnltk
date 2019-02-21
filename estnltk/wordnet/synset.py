@@ -53,7 +53,7 @@ class Synset:
         self.name = '{}.{}.{}'.format(name, self.pos, self.sense)
                 
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         
         return self.wordnet == other.wordnet and self.id != None and self.id == other.id
     
@@ -81,13 +81,14 @@ class Synset:
         else:
             return []
 
-    
+    '''
     def get_synset(self, synset_id=None):
 
         if synset_id is None:
             return Synset(self.wordnet, self.id)
         else:
             return Synset(self.wordnet, synset_id)    
+    '''
 
 
     def closure(self, relation, depth_threshold=float('inf'), return_depths=False):   
