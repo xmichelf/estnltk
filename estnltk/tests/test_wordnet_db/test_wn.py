@@ -3,7 +3,6 @@ Comparison of wordnet relations with https://teksaurus.keeleressursid.ee relatio
 '''
 
 from estnltk.wordnet import Wordnet
-from estnltk.wordnet.synset import Synset
 
 wn = Wordnet(version='74')
 
